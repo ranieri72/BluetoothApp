@@ -82,8 +82,9 @@ public class BluetoothChatActivity extends AppCompatActivity implements DialogIn
 
         if (mBluetoothAdapter != null) {
             if (!mBluetoothAdapter.isEnabled()) {
-                Intent it = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                startActivityForResult(it, BT_ATIVAR);
+//                    Intent it = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+//                    startActivityForResult(it, BT_ATIVAR);
+                mBluetoothAdapter.enable();
             }
         } else {
             Toast.makeText(this, "Bluetooth indisponivel", Toast.LENGTH_LONG).show();
@@ -151,17 +152,13 @@ public class BluetoothChatActivity extends AppCompatActivity implements DialogIn
 
         String[] aparelhos = new String[mDispositivosEncontrados.size()];
         for (int i = 0; i < mDispositivosEncontrados.size(); i++) {
-            if (mDispositivosEncontrados.get(i) != null) {
-                if (!mDispositivosEncontrados.get(i).getName().equals("")) {
-                    aparelhos[i] = mDispositivosEncontrados.get(i).getName();
-                }
+            if (mDispositivosEncontrados.get(i) != null && mDispositivosEncontrados.get(i).getName() != null) {
+                aparelhos[i] = mDispositivosEncontrados.get(i).getName();
+            }
+            if (aparelhos[i] == null) {
+                aparelhos[i] = "Nome nulo";
             }
         }
-
-//        String[] aparelhos = new String[3];
-//        aparelhos[0] = "teste1";
-//        aparelhos[1] = "teste1";
-//        aparelhos[2] = "teste1";
 
         AlertDialog dialog = new AlertDialog.Builder(this)
                 .setTitle("Aparelhos encontrados")
@@ -256,11 +253,6 @@ public class BluetoothChatActivity extends AppCompatActivity implements DialogIn
         mAguardeDialog.dismiss();
         mThreadComunicacao = new ThreadComunicacao();
         mThreadComunicacao.iniciar(socket);
-
-        //exibirProgressDialog("Mensagem do servidor", BT_TEMPO_DESCOBERTA);
-//        paraTudo();
-//        mThreadServidor = new ThreadServidor();
-//        mThreadServidor.iniciar();
     }
 
     private class ThreadServidor extends Thread {
