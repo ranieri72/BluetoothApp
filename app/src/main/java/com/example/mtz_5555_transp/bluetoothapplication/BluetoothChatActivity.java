@@ -249,6 +249,12 @@ public class BluetoothChatActivity extends AppCompatActivity implements DialogIn
         mThreadCliente.iniciar(mDispositivosEncontrados.get(which));
     }
 
+    private void iniciarThreadCliente(BluetoothDevice device) {
+        paraTudo();
+        mThreadCliente = new ThreadCliente();
+        mThreadCliente.iniciar(device);
+    }
+
     private void trataSocket(final BluetoothSocket socket) {
         mAguardeDialog.dismiss();
         mThreadComunicacao = new ThreadComunicacao();
@@ -357,10 +363,16 @@ public class BluetoothChatActivity extends AppCompatActivity implements DialogIn
             if (BluetoothDevice.ACTION_FOUND.equals(intent.getAction())) {
                 BluetoothDevice device =
                         intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                mDispositivosEncontrados.add(device);
 
+                if (device.getAddress().equals("80:58:F8:70:BA:D9")) {
+                    mBluetoothAdapter.cancelDiscovery();
+                    mAguardeDialog.dismiss();
+                    iniciarThreadCliente(device);
+                }
+                //mDispositivosEncontrados.add(device);
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(intent.getAction())) {
-                exibirDispositivosEncontrados();
+                mAguardeDialog.dismiss();
+                //exibirDispositivosEncontrados();
             }
         }
     }
